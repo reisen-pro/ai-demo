@@ -1,0 +1,33 @@
+erDiagram
+chat_sessions ||--|{ chat_messages : contains
+knowledge_documents ||--|{ vector_store : "indexed as (via metadata)"
+
+    chat_sessions {
+        UUID id PK
+        String user_id
+        String title
+        Timestamp updated_at
+        JSONB metadata
+    }
+
+    chat_messages {
+        UUID id PK
+        UUID session_id FK
+        String role
+        Text content
+        JSONB metadata "store cited_doc_ids"
+    }
+
+    knowledge_documents {
+        UUID id PK
+        String filename
+        String status
+        Integer chunk_count
+    }
+
+    vector_store {
+        UUID id PK
+        Vector embedding
+        Text content
+        JSONB metadata "store {document_id: '...', source: '...'}"
+    }
