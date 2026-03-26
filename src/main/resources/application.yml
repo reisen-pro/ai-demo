@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: spring-ai-ollama-pg-demo
+
+  # 数据库配置 (PostgreSQL + pgvector)
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ai-demo
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+
+  # Spring AI 配置
+  ai:
+    # Ollama 配置
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: gpt-oss:20b  # 确保你本地运行了 'ollama pull llama3'，也可以换成 qwen2, mistral 等
+          temperature: 0.7
+      embedding:
+        options:
+          model: nomic-embed-text # 如果需要本地向量化，需拉取此模型：ollama pull nomic-embed-text
+
+    # Vector Store (pgvector) 配置
+    vectorstore:
+      pgvector:
+        index-type: HNSW # 或 IVFFLAT，生产环境推荐 HNSW
+        distance-type: COSINE_DISTANCE
+        initialize-schema: true # 【重要】自动创建向量表和索引，首次启动设为 true，之后可设为 false
+        table-name: vector_store
+        embedding-column: embedding
+        content-column: content
+        metadata-column: metadata
+
+# 日志配置 (方便调试)
+logging:
+  level:
+    org.springframework.ai: DEBUG
+    com.example: DEBUG
